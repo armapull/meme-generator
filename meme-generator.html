@@ -58,7 +58,7 @@
         .file-input-label {
             display: inline-block;
             padding: 1rem 2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff8b5f 0%, #ff6b6b 100%);
             color: white;
             border-radius: 50px;
             cursor: pointer;
@@ -177,7 +177,7 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff8b5f 0%, #ff6b6b 100%);
             cursor: pointer;
         }
 
@@ -185,7 +185,7 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff8b5f 0%, #ff6b6b 100%);
             cursor: pointer;
             border: none;
         }
@@ -194,7 +194,7 @@
             min-width: 50px;
             text-align: center;
             font-weight: 600;
-            color: #667eea;
+            color: #ff6b6b;
         }
 
         .color-control {
@@ -218,7 +218,7 @@
 
         .download-btn {
             padding: 1rem 2rem;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            background: linear-gradient(135deg, #ff8b5f 0%, #ff6b6b 100%);
             color: white;
             border: none;
             border-radius: 50px;
@@ -247,6 +247,96 @@
             font-style: italic;
         }
 
+        .text-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff8b5f 0%, #ff6b6b 100%);
+            color: white;
+            box-shadow: 0 5px 12px rgba(255, 107, 107, 0.35);
+        }
+
+        .btn-secondary {
+            background: #ffe3dc;
+            color: #d94848;
+            border: 2px solid #ffd3c5;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .text-list {
+            list-style: none;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 0.5rem;
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-height: 48px;
+        }
+
+        .text-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .text-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.55rem;
+            background: #ffe8e3;
+            color: #d94848;
+            border-radius: 999px;
+            border: 1px solid #ffd3c5;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #c03c3c;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 0.5rem;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 1rem;
@@ -272,12 +362,12 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎭 Meme Generator</h1>
+        <h1>Meme Generator</h1>
         
         <div class="upload-section">
             <div class="file-input-wrapper">
                 <input type="file" id="imageInput" accept="image/*">
-                <label for="imageInput" class="file-input-label">📷 Choose Image</label>
+                <label for="imageInput" class="file-input-label">Choose Image</label>
             </div>
         </div>
 
@@ -289,6 +379,10 @@
             <div class="control-group">
                 <label for="textInput">Meme Text:</label>
                 <input type="text" id="textInput" placeholder="Enter your meme text here...">
+                <div class="text-actions">
+                    <button id="addTextBtn" class="btn btn-primary">Add Text</button>
+                    <button id="clearTextsBtn" class="btn btn-secondary">Clear Texts</button>
+                </div>
             </div>
 
             <div class="control-group">
@@ -324,6 +418,13 @@
                 </div>
             </div>
 
+            <div class="control-group">
+                <label>Added Texts:</label>
+                <ul id="textList" class="text-list">
+                    <li class="empty-state">No texts added yet</li>
+                </ul>
+            </div>
+
             <button id="downloadBtn" class="download-btn" disabled>Download Meme</button>
         </div>
     </div>
@@ -339,10 +440,19 @@
         const fontSizeValue = document.getElementById('fontSizeValue');
         const textColorPicker = document.getElementById('textColorPicker');
         const downloadBtn = document.getElementById('downloadBtn');
+        const addTextBtn = document.getElementById('addTextBtn');
+        const clearTextsBtn = document.getElementById('clearTextsBtn');
+        const textList = document.getElementById('textList');
 
         // State variables
         let currentImage = null;
         let imageLoaded = false;
+        let texts = [];
+
+        function getSelectedPosition() {
+            const selected = document.querySelector('input[name="position"]:checked');
+            return selected ? selected.value : 'center';
+        }
 
         // Load image function
         function loadImage() {
@@ -375,57 +485,76 @@
         function drawMeme() {
             if (!imageLoaded || !currentImage) return;
 
-            // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw image
             ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
 
-            // Get text and settings
-            const text = textInput.value.trim();
-            if (!text) return; // Don't draw text if empty
+            const allTexts = [...texts];
+            const previewText = textInput.value.trim();
 
-            const fontSize = parseInt(fontSizeSlider.value);
-            const selectedPosition = document.querySelector('input[name="position"]:checked').value;
-
-            // Calculate text position
-            let x = canvas.width / 2; // Always centered horizontally
-            let y;
-            const padding = 30;
-
-            switch(selectedPosition) {
-                case 'top':
-                    y = padding + fontSize / 2;
-                    break;
-                case 'center':
-                    y = canvas.height / 2;
-                    break;
-                case 'bottom':
-                    y = canvas.height - padding - fontSize / 2;
-                    break;
-                default:
-                    y = canvas.height / 2;
+            if (previewText) {
+                allTexts.push({
+                    id: 'preview',
+                    text: previewText,
+                    position: getSelectedPosition(),
+                    fontSize: parseInt(fontSizeSlider.value),
+                    color: textColorPicker.value
+                });
             }
 
-            // Set text styling
-            ctx.font = `${fontSize}px Impact, Arial Black, sans-serif`;
+            if (!allTexts.length) return;
+
+            const padding = 30;
+            const grouped = { top: [], center: [], bottom: [] };
+
+            allTexts.forEach(item => {
+                const key = grouped[item.position] ? item.position : 'center';
+                grouped[key].push(item);
+            });
+
+            const drawGroupTopDown = (items, startY) => {
+                let cursor = startY;
+                items.forEach(item => {
+                    drawTextItem(item, cursor + item.fontSize / 2);
+                    cursor += item.fontSize + 10;
+                });
+            };
+
+            const drawGroupBottomUp = (items, startY) => {
+                let cursor = startY;
+                items.forEach(item => {
+                    drawTextItem(item, cursor - item.fontSize / 2);
+                    cursor -= item.fontSize + 10;
+                });
+            };
+
+            if (grouped.top.length) {
+                drawGroupTopDown(grouped.top, padding);
+            }
+
+            if (grouped.center.length) {
+                const totalHeight = grouped.center.reduce((sum, item, index) => {
+                    return sum + item.fontSize + (index === grouped.center.length - 1 ? 0 : 10);
+                }, 0);
+                const start = (canvas.height - totalHeight) / 2;
+                drawGroupTopDown(grouped.center, start);
+            }
+
+            if (grouped.bottom.length) {
+                drawGroupBottomUp(grouped.bottom, canvas.height - padding);
+            }
+        }
+
+        function drawTextItem(item, y) {
+            ctx.font = `${item.fontSize}px Impact, Arial Black, sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-
-            // Calculate stroke width (proportional to font size) - thicker border
-            const strokeWidth = fontSize / 8;
-            ctx.lineWidth = strokeWidth;
-
-            // Get selected text color
-            const textColor = textColorPicker.value;
-
-            // Draw black outline (stroke)
+            ctx.lineWidth = item.fontSize / 8;
             ctx.strokeStyle = '#000000';
-            ctx.strokeText(text, x, y);
+            ctx.fillStyle = item.color;
 
-            // Draw text fill with selected color
-            ctx.fillStyle = textColor;
-            ctx.fillText(text, x, y);
+            const x = canvas.width / 2;
+            ctx.strokeText(item.text, x, y);
+            ctx.fillText(item.text, x, y);
         }
 
         // Update meme function (event handler)
@@ -433,6 +562,78 @@
             if (imageLoaded) {
                 drawMeme();
             }
+        }
+
+        function addText() {
+            if (!imageLoaded) return;
+            const text = textInput.value.trim();
+            if (!text) return;
+
+            texts.push({
+                id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+                text,
+                position: getSelectedPosition(),
+                fontSize: parseInt(fontSizeSlider.value),
+                color: textColorPicker.value
+            });
+
+            textInput.value = '';
+            renderTextList();
+            drawMeme();
+        }
+
+        function removeText(id) {
+            texts = texts.filter(item => item.id !== id);
+            renderTextList();
+            drawMeme();
+        }
+
+        function clearTexts() {
+            texts = [];
+            renderTextList();
+            drawMeme();
+        }
+
+        function renderTextList() {
+            textList.innerHTML = '';
+            if (!texts.length) {
+                const empty = document.createElement('li');
+                empty.className = 'empty-state';
+                empty.textContent = 'No texts added yet';
+                textList.appendChild(empty);
+                return;
+            }
+
+            texts.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'text-list-item';
+
+                const meta = document.createElement('div');
+                meta.className = 'text-meta';
+                meta.textContent = item.text;
+
+                const tags = document.createElement('div');
+                tags.className = 'text-meta';
+                const posTag = document.createElement('span');
+                posTag.className = 'tag';
+                posTag.textContent = item.position;
+                const sizeTag = document.createElement('span');
+                sizeTag.className = 'tag';
+                sizeTag.textContent = `${item.fontSize}px`;
+
+                tags.appendChild(posTag);
+                tags.appendChild(sizeTag);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.textContent = 'Remove';
+                removeBtn.addEventListener('click', () => removeText(item.id));
+
+                li.appendChild(meta);
+                li.appendChild(tags);
+                li.appendChild(removeBtn);
+                textList.appendChild(li);
+            });
         }
 
         // Download meme function
@@ -467,10 +668,13 @@
         positionRadios.forEach(radio => {
             radio.addEventListener('change', updateMeme);
         });
+        addTextBtn.addEventListener('click', addText);
+        clearTextsBtn.addEventListener('click', clearTexts);
         downloadBtn.addEventListener('click', downloadMeme);
 
         // Initialize font size display
         updateFontSizeDisplay();
+        renderTextList();
     </script>
 </body>
 </html>
