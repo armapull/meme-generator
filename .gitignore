@@ -32,5 +32,6 @@ desktop.ini
 dist/
 build/
 *.egg-info/
+.next/
 node_modules
 .vercel
