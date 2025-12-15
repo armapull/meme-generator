@@ -1,0 +1,13 @@
+[33mcommit af44f5d3c5f86673f47c4f49d02e452ebd51e0fd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+Author: Quentin Berge <qb@solutech.com>
+Date:   Sun Dec 14 10:16:29 2025 -0400
+
+    Add multi-text support to meme generator
+    
+    Enable stacking multiple meme texts with add/remove controls and warm palette.
+
+[33mcommit 7f466f295328e3a71aa0c5b3442d9ffa3e62ee02[m
+Author: Quentin Berge <qb@solutech.com>
+Date:   Sat Dec 13 20:56:17 2025 -0400
+
+    Initial commit

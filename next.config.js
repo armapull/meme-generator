@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable standalone output for Docker deployments (optional)
+  // Uncomment the line below if deploying with Docker
+  // output: 'standalone',
   images: {
     domains: [],
   },

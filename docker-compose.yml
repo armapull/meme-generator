@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  meme-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_INSTANT_APP_ID=${NEXT_PUBLIC_INSTANT_APP_ID}
+      - MODERATION_API_KEY=${MODERATION_API_KEY}
+      - MODERATION_API_SECRET=${MODERATION_API_SECRET}
+    restart: unless-stopped
+

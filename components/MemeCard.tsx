@@ -73,6 +73,10 @@ export default function MemeCard({ meme }: MemeCardProps) {
       
       // Note: Upvotes linked to this meme should be deleted automatically
       // if cascade delete is configured in the schema
+      
+      // Reset deleting state after successful deletion
+      // (Component will unmount when meme is removed from feed, but reset state for safety)
+      setIsDeleting(false);
     } catch (err) {
       console.error('Error deleting meme:', err);
       alert('Failed to delete meme. Please try again.');
