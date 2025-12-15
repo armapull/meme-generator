@@ -28,3 +28,4 @@ interface AppSchema extends _AppSchema {}
 const schema: AppSchema = _schema;
 
 export default schema;
+export type { AppSchema };

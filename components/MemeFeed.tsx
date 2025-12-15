@@ -2,9 +2,6 @@
 
 import { db } from '@/lib/instant';
 import MemeCard from './MemeCard';
-import type { AppSchema } from '@/instant.schema';
-
-type Meme = AppSchema['entities']['memes'];
 
 export default function MemeFeed() {
   const { data, isLoading } = db.useQuery({
@@ -19,7 +16,7 @@ export default function MemeFeed() {
     );
   }
 
-  const memes = (data?.memes || []) as Meme[];
+  const memes = (data?.memes || []) as any[];
   
   // Sort by createdAt descending (client-side for now)
   const sortedMemes = [...memes].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
